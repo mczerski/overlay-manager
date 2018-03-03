@@ -16,12 +16,6 @@ STAGE2=${OVERLAY_DIR}/stage2
 STAGE_LINK=${OVERLAY_DIR}/link
 RW_DIR=${OVERLAY_DIR}/rw
 
-if [ -d "$OVERLAY_DIR" ]
-then
-   echo "$1 already exist" >&2
-   exit 1
-fi
-
 mkdir -p ${OVERLAY_DIR}
 mkdir -p ${STAGE0}
 mkdir -p ${STAGE1}
@@ -29,4 +23,4 @@ mkdir -p ${STAGE2}
 mkdir -p ${RW_DIR}
 
 rsync -avH --delete-after --inplace --no-whole-file ${DIR}/ ${STAGE0}/
-ln -s ${STAGE0} ${STAGE_LINK}
+ln -snf ${STAGE0} ${STAGE_LINK}
