@@ -1,0 +1,40 @@
+#!/bin/bash
+
+set -u
+set -e
+
+if [ "$#" -lt 1 ]; then
+    echo "Usage: $0 <dir to mount>"
+    exit 1
+fi
+
+DIR=$1
+OVERLAY_DIR=$(realpath /overlay/${DIR})
+STAGE_LINK=${OVERLAY_DIR}/link
+RW_DIR=${OVERLAY_DIR}/rw
+
+[ -z "${DIR}" ] && exit 1 
+if [ ! -L "${STAGE_LINK}" ]
+then
+    echo "Stage link ${STAGE_LINK} does not exist" >&2
+    exit 1
+fi
+if [ ! -d "${RW_DIR}" ]
+then
+    echo "${RW_DIR} does not exist" >&2
+    exit 1
+fi
+LAST_STAGE=$(readlink $STAGE_LINK)
+#
+# ro must be the first mount option for root .....
+#
+ROOT_MOUNT=$( awk '$2=="/" { print substr($4,1,2) }' /proc/mounts )
+if [ "$ROOT_MOUNT" != "ro" ]; then
+    /bin/mount --bind ${LAST_STAGE} ${DIR}
+else
+    /bin/mount -t tmpfs ramdisk ${RW_DIR}
+    /bin/mkdir ${RW_DIR}/upper
+    /bin/mkdir ${RW_DIR}/work
+    OPTS="-o lowerdir=${LAST_STAGE},upperdir=${RW_DIR}/upper,workdir=${RW_DIR}/work"
+    /bin/mount -t overlay ${OPTS} overlay ${DIR}
+fi

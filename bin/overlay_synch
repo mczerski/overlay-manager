@@ -1,0 +1,70 @@
+#!/bin/bash
+
+set -u
+set -e
+
+if [ "$#" -ne 1 ]; then
+    echo "Usage: $0 <dir to synchronise>"
+    exit 1
+fi
+
+DIR=$1
+OVERLAY_DIR=$(realpath /overlay/${DIR})
+STAGE0=${OVERLAY_DIR}/stage0
+STAGE1=${OVERLAY_DIR}/stage1
+STAGE2=${OVERLAY_DIR}/stage2
+STAGE_LINK=${OVERLAY_DIR}/link
+
+function check_dir_exists {
+    if [ ! -d "$1" ]
+    then
+       echo "$1 does not exist" >&2
+        exit 1
+    fi
+}
+
+check_dir_exists ${STAGE0}
+check_dir_exists ${STAGE1}
+check_dir_exists ${STAGE2}
+
+if [ ! -L ${STAGE_LINK} ]; then
+    echo "Stage link does not exist"
+    exit 1
+fi
+LAST_STAGE=$(readlink $STAGE_LINK)
+echo "Latest stage dir link is pointing to $LAST_STAGE"
+if [ ! ${LAST_STAGE} -ef ${STAGE0} ] && [ ! ${LAST_STAGE} -ef ${STAGE1} ] && [ ! ${LAST_STAGE} -ef ${STAGE2} ]; then
+    echo "Stage link is not pointing to any stage dir"
+    exit 1
+fi
+
+#find new synch target
+DISABLED_STAGE=$(awk '$2=="/var" { print $4 }' /proc/mounts | sed -n 's/.*lowerdir=\([^,]*\).*/\1/p')
+echo "${DIR} lowerdir is ${DISABLED_STAGE}"
+if [ ${DISABLED_STAGE} -ef ${STAGE0} ]; then
+    SYNC_TARGET0=${STAGE1}
+    SYNC_TARGET1=${STAGE2}
+elif [ ${DISABLED_STAGE} -ef ${STAGE1} ]; then
+    SYNC_TARGET0=${STAGE0}
+    SYNC_TARGET1=${STAGE2}
+else
+    SYNC_TARGET0=${STAGE0}
+    SYNC_TARGET1=${STAGE1}
+fi
+if [ ${LAST_STAGE} -ef ${SYNC_TARGET0} ]; then
+    SYNC_TARGET=${SYNC_TARGET1}
+else
+    SYNC_TARGET=${SYNC_TARGET0}
+fi
+echo "Synch target is ${SYNC_TARGET}"
+
+function cleanup {
+    ro
+}
+trap cleanup EXIT
+
+rw
+rsync -avH --delete-after --inplace --no-whole-file ${DIR}/ ${SYNC_TARGET}/
+sync
+#relink atomically
+ln -snf ${SYNC_TARGET} ${STAGE_LINK}.tmp && mv -Tf ${STAGE_LINK}.tmp ${STAGE_LINK}

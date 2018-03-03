@@ -1,0 +1,11 @@
+[Unit]
+Description=Sync overlay folders before shutdown
+DefaultDependencies=no
+Before=umount.target
+
+[Service]
+Type=oneshot
+ExecStart=/usr/local/bin/overlay_synch /var
+
+[Install]
+WantedBy=halt.target poweroff.target reboot.target
