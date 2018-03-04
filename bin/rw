@@ -1,0 +1,3 @@
+#!/bin/sh
+/bin/mount -o remount,rw /
+/bin/mount -o remount,rw /boot
