@@ -27,11 +27,8 @@ install:
 	$(INSTALL_DIR) "$(CRONDIR)"
 	$(INSTALL_SCRIPT) cron/overlay_synch "$(CRONDIR)/overlay_synch"
 	$(Q)echo -e '\033[1;32mInstalling systemd files...\033[0m'
-	$(INSTALL_DIR) "$(INITDIR_SYSTEMD)"
-	$(INSTALL_DATA) systemd/overlay-umount@.service "$(INITDIR_SYSTEMD)/overlay-umount@.service"
 
 uninstall:
-	$(RM) "$(INITDIR_SYSTEMD)/overlay-umount.service"
 	$(RM) "$(CRONDIR)/overlay_synch"
 	$(RM) "$(BINDIR)/overlay_synch"
 	$(RM) "$(BINDIR)/overlay_mount"
