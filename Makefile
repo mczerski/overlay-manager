@@ -23,6 +23,8 @@ install:
 	$(INSTALL_PROGRAM) bin/overlay_install "$(BINDIR)/overlay_install"
 	$(INSTALL_PROGRAM) bin/overlay_mount "$(BINDIR)/overlay_mount"
 	$(INSTALL_PROGRAM) bin/overlay_synch "$(BINDIR)/overlay_synch"
+	$(INSTALL_PROGRAM) bin/ro "$(BINDIR)/ro"
+	$(INSTALL_PROGRAM) bin/rw "$(BINDIR)/rw"
 	$(Q)echo -e '\033[1;32mInstalling cronjob...\033[0m'
 	$(INSTALL_DIR) "$(CRONDIR)"
 	$(INSTALL_SCRIPT) cron/overlay_synch "$(CRONDIR)/overlay_synch"
