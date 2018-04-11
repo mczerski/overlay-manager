@@ -1,6 +1,6 @@
 
 PREFIX ?= /usr/local
-CRONDIR = /etc/cron.hourly
+CRONDIR = /etc/cron.daily
 INITDIR_SYSTEMD = /etc/systemd/system
 BINDIR = $(PREFIX)/bin
 
