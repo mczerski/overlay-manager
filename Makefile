@@ -28,7 +28,6 @@ install:
 	$(Q)echo -e '\033[1;32mInstalling cronjob...\033[0m'
 	$(INSTALL_DIR) "$(CRONDIR)"
 	$(INSTALL_SCRIPT) cron/overlay_synch "$(CRONDIR)/overlay_synch"
-	$(Q)echo -e '\033[1;32mInstalling systemd files...\033[0m'
 
 uninstall:
 	$(RM) "$(CRONDIR)/overlay_synch"

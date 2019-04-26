@@ -1,0 +1,11 @@
+[Unit]
+Description=Sync overlay /@%I before shutdown
+DefaultDependencies=no
+RequiresMountsFor=/@%I /overlay/@%I/rw
+
+[Service]
+Type=oneshot
+ExecStart=/usr/local/bin/overlay_synch /@%I
+
+[Install]
+WantedBy=sysinit.target
