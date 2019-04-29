@@ -25,14 +25,13 @@ install:
 	$(INSTALL_PROGRAM) bin/overlay_synch "$(BINDIR)/overlay_synch"
 	$(INSTALL_PROGRAM) bin/ro "$(BINDIR)/ro"
 	$(INSTALL_PROGRAM) bin/rw "$(BINDIR)/rw"
-	$(Q)echo -e '\033[1;32mInstalling cronjob...\033[0m'
-	$(INSTALL_DIR) "$(CRONDIR)"
-	$(INSTALL_SCRIPT) cron/overlay_synch "$(CRONDIR)/overlay_synch"
 
 uninstall:
 	$(RM) "$(CRONDIR)/overlay_synch"
 	$(RM) "$(BINDIR)/overlay_synch"
 	$(RM) "$(BINDIR)/overlay_mount"
 	$(RM) "$(BINDIR)/overlay_install"
+	$(RM) "$(BINDIR)/ro"
+	$(RM) "$(BINDIR)/rw"
 
 .PHONY: install uninstall
