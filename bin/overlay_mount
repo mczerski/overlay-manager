@@ -32,7 +32,7 @@ ROOT_MOUNT=$( awk '$2=="/" { print substr($4,1,2) }' /proc/mounts )
 if [ "$ROOT_MOUNT" != "ro" ]; then
     /bin/mount --bind ${LAST_STAGE} ${DIR}
 else
-    /bin/mount -t tmpfs ramdisk ${RW_DIR}
+    /bin/mount -t tmpfs -o size=256M ramdisk ${RW_DIR}
     /bin/mkdir ${RW_DIR}/upper
     /bin/mkdir ${RW_DIR}/work
     OPTS="-o lowerdir=${LAST_STAGE},upperdir=${RW_DIR}/upper,workdir=${RW_DIR}/work"
