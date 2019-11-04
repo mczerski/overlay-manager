@@ -10,6 +10,7 @@ RequiresMountsFor=/%I /overlay/%I/rw
 Type=oneshot
 ExecStop=/usr/local/bin/overlay_synch /%I
 RemainAfterExit=yes
+TimeoutStopSec=5min
 
 [Install]
 WantedBy=sysinit.target
