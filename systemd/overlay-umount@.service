@@ -1,6 +1,9 @@
 [Unit]
 Description=Sync overlay /%I before shutdown
 DefaultDependencies=no
+After=sysinit.target
+Before=basic.target shutdown.target
+Conflicts=shutdown.target
 RequiresMountsFor=/%I /overlay/%I/rw
 
 [Service]
