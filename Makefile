@@ -25,6 +25,8 @@ install:
 	$(INSTALL_PROGRAM) bin/overlay_synch "$(BINDIR)/overlay_synch"
 	$(INSTALL_PROGRAM) bin/ro "$(BINDIR)/ro"
 	$(INSTALL_PROGRAM) bin/rw "$(BINDIR)/rw"
+	$(INSTALL_PROGRAM) bin/ro-boot "$(BINDIR)/ro-boot"
+	$(INSTALL_PROGRAM) bin/rw-boot "$(BINDIR)/rw-boot"
 
 uninstall:
 	$(RM) "$(CRONDIR)/overlay_synch"
@@ -33,5 +35,7 @@ uninstall:
 	$(RM) "$(BINDIR)/overlay_install"
 	$(RM) "$(BINDIR)/ro"
 	$(RM) "$(BINDIR)/rw"
+	$(RM) "$(BINDIR)/ro-boot"
+	$(RM) "$(BINDIR)/rw-boot"
 
 .PHONY: install uninstall
