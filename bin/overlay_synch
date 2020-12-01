@@ -64,7 +64,7 @@ function cleanup {
 trap cleanup EXIT
 
 rw
-rsync -avH --delete-after --inplace --no-whole-file ${DIR}/ ${SYNC_TARGET}/
+rsync -avH --delete --delete-after --inplace --no-whole-file ${DIR}/ ${SYNC_TARGET}/
 sync
 #relink atomically
 ln -snf ${SYNC_TARGET} ${STAGE_LINK}.tmp && mv -Tf ${STAGE_LINK}.tmp ${STAGE_LINK}
