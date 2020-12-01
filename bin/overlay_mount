@@ -9,6 +9,28 @@ if [ "$#" -lt 1 ]; then
 fi
 
 DIR=$1
+options=
+while (( "$#" )); do
+    case "$1" in
+        -o)
+            options=$2
+            shift 2
+            ;;
+        *)
+            shift
+            ;;
+     esac
+done
+
+tmpfs_size=256M
+IFS=',' read -ra options_splited <<< "$options"
+for option in "${options_splited[@]}"; do
+    if [ ${option%=*} == 'size' ]; then
+        tmpfs_size=${option##*=}
+    fi
+done
+
+
 OVERLAY_DIR=$(realpath /overlay/${DIR})
 STAGE_LINK=${OVERLAY_DIR}/link
 RW_DIR=${OVERLAY_DIR}/rw
@@ -32,7 +54,10 @@ ROOT_MOUNT=$( awk '$2=="/" { print substr($4,1,2) }' /proc/mounts )
 if [ "$ROOT_MOUNT" != "ro" ]; then
     /bin/mount --bind ${LAST_STAGE} ${DIR}
 else
-    /bin/mount -t tmpfs -o size=256M ramdisk ${RW_DIR}
+    if mountpoint -q ${RW_DIR}; then
+        /bin/umount ${RW_DIR}
+    fi
+    /bin/mount -t tmpfs -o size=$tmpfs_size ramdisk ${RW_DIR}
     /bin/mkdir ${RW_DIR}/upper
     /bin/mkdir ${RW_DIR}/work
     OPTS="-o lowerdir=${LAST_STAGE},upperdir=${RW_DIR}/upper,workdir=${RW_DIR}/work"
